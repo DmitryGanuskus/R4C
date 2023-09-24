@@ -38,6 +38,7 @@ def create_robot(request):
     return JsonResponse(data={'error': 'Неверный тип запроса'}, status=400)
 
 
+
 # def send_xlsx_file(request):
 #     if request.method == 'GET':
 #         today = datetime.today().replace(microsecond=0)
