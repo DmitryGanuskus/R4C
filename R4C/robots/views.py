@@ -30,8 +30,8 @@ def create_robot(request):
             if not Robot.objects.filter(model=model, version=version,
                                         created=created).exists():
                 # Создание нового объекта робота в базе данных
-                Robot.objects.create(
-                    model=model, version=version, created=created
+                Robot.objects.create(serial=f'{model}-{version}', model=model,
+                                     version=version, created=created
                 )
 
                 # Возврат JSON-ответа с сообщением об успешном создании робота
