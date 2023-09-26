@@ -65,22 +65,22 @@ def send_xlsx_file(request):
         ).order_by('model')
 
         for robot in robots:
-            if robot.model not in model_data:
+            model, version = robot.model, robot.version
+            if model not in model_data:
                 # Создание пустого DataFrame для каждой модели робота
-                model_data[robot.model] = pd.DataFrame(
+                model_data[model] = pd.DataFrame(
                     columns=['Модель', 'Версия', 'Количество за неделю']
                 )
 
-            df = model_data[robot.model]
+            df = model_data[model]
             # Поиск строки с соответствующей версией робота
-            version_row = df[(df['Версия'] == robot.version)]
+            version_row = df[(df['Версия'] == version)]
             if version_row.empty:
                 # Добавление новой строки в DataFrame, если версия робота не найдена
                 df = pd.concat([
                     df,
                     pd.DataFrame.from_records([{
-                        'Модель': robot.model,
-                        'Версия': robot.version,
+                        'Модель': model, 'Версия': version,
                         'Количество за неделю': 1,
                     }])
                 ], ignore_index=True)
@@ -88,7 +88,7 @@ def send_xlsx_file(request):
                 version_row_index = version_row.index[0]
                 # Увеличение счетчика количества роботов за неделю, если версия робота уже существует
                 df.at[version_row_index, 'Количество за неделю'] += 1
-            model_data[robot.model] = df
+            model_data[model] = df
 
         # Создание файла Excel с помощью библиотеки pandas
         with pd.ExcelWriter(f'download_file/robots.xlsx',
